@@ -1,0 +1,4 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "sbc6502a1")(type "KiCad")(uri "${KIPRJMOD}/lib/sbc6502a1.pretty")(options "")(descr ""))
+)

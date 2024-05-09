@@ -20,7 +20,7 @@ $ sudo apt-get install fakeroot debhelper dpkg-dev
 $ fakeroot dpkg-buildpackage -b -us -uc
 $ sudo apt install ../minipro_0.4-1_amd64.deb
 ## write the example image for W27C512
-$ minipro -p W27C512@DIP28 -f ihex -w ROM-rev1.hex
+$ minipro -p W27C512@DIP28 -f ihex -w ROM.hex
 ```
 
 ### PIA Communicator
@@ -55,7 +55,7 @@ $ make install
 $ minicom -b 115200 -D /dev/ttyUSB0
 ```
 
-## Contents of "ROM-rev1.hex"
+## Contents of "ROM.hex"
 
 this image is the example.
 
@@ -65,18 +65,6 @@ all contained programs are from other repositories.
   * A000 - OSI BASIC 1.0 Rev 3.2
     * 8KB, start: BD0D
     * Microsoft BASIC Interpreter with 6 digit floating point
-  * E000 - TinyBASIC 0.2.2
-    * 2KB, start: E000
-    * TinyBASIC Interpreter
-  * F000 - VTL02 C
-    * 1KB, start: F000
-    * VTL02 Interpreter
-  * FF00 - wozmon
-    * start: FF00, RESET
-* BANK1 (JP1 close)
-  * A000 - jmon
-    * 8KB, start: A000
-    * Assembler/Disassembler monitor, support SRecord format
   * E000 - a1basic
     * 4KB, start: E000
     * Apple1 Integer BASIC Interpreter
@@ -86,3 +74,15 @@ all contained programs are from other repositories.
   * FF00 - Krusader's minimonitor
     * start: FF00, RESET
     * modified wozmon
+* BANK1 (JP1 close)
+  * A000 - jmon
+    * 8KB, start: A000
+    * Disassembler monitor, S-Record loading supported
+  * E000 - A1-Assembler
+    * 4KB, start: E000
+    * Symbolic Assembler
+  * F000 - VTL02 C
+    * 1KB, start: F000
+    * VTL02 Interpreter
+  * FF00 - wozmon
+    * start: FF00, RESET

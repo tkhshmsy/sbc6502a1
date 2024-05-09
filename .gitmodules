@@ -4,3 +4,6 @@
 [submodule "firmware/pia_communicator"]
 	path = firmware/pia_communicator
 	url = https://github.com/jblang/pia_communicator
+[submodule "develop/cc65/cc65"]
+	path = develop/cc65/cc65
+	url = git@github.com:cc65/cc65.git

@@ -1,0 +1,203 @@
+commit cf4604658d509546c987c3a21370e5aa40c9fdcf
+Author: tkhshmsy <tkhshmsy@gmail.com>
+Date:   Tue May 7 16:51:40 2024 +0900
+
+    fix for abc6502a1
+
+diff --git a/vtl02ca2.a65 b/vtl02ca2.a65
+index 148b17e..e4a0004 100644
+--- a/vtl02ca2.a65
++++ b/vtl02ca2.a65
+@@ -225,31 +225,32 @@ nulstk   = $01ff    ; system stack resides in page 1
+ ;KEYIN    = $fd0c    ; apple monitor keyin routine
+ ;COUT     = $fded    ; apple monitor charout routine
+ ;-----------------------------------------------------;
+-; Equates for the 2m5 SBC emulator
++; for sbc6502a1
+ ESC      = 27       ; "Cancel current input line" key
+ BS       = 8        ; "Delete last keypress" key
+ OP_OR    = '|'      ; Bit-wise OR operator
+ linbuf   = $0200    ; input line buffer
+ prgm     = $0400    ; VTL02B program grows from here
+-himem    = $7b00    ;   ... up to the top of user RAM
+-vtl02c   = $fb00    ; interpreter cold entry point
++himem    = $8000    ;   ... up to the top of user RAM
++vtl02c   = $f000    ; interpreter cold entry point
+ ;                     (warm entry point is startok)
+-io_area  = $bf00      ;configure emulator terminal I/O
+-acia_tx  = io_area+$f0  ;acia tx data register
+-acia_rx  = io_area+$f0  ;acia rx data register
+-acia_st  = io_area+$ff  ;bit 0 = 10ms tick
++KBD      = $D010
++KBDCR    = $D011
++DSP      = $D012
++DSPCR    = $D013
++COUT     = $FFEF
+ ;=====================================================;
+-    org  vtl02c
++    .org  vtl02c
+ ;-----------------------------------------------------;
+ ; Initialize program area pointers and start VTL02C
+ ; 17 bytes
+-    lda  #lo(prgm)
++    lda  #<(prgm)
+     sta  ampr       ; {&} -> empty program
+-    lda  #hi(prgm)
++    lda  #>(prgm)
+     sta  ampr+1
+-    lda  #lo(himem)
++    lda  #<(himem)
+     sta  star       ; {*} -> top of user RAM
+-    lda  #hi(himem)
++    lda  #>(himem)
+     sta  star+1
+ startok:
+     sec             ; request "OK" message
+@@ -258,7 +259,7 @@ startok:
+ ; 32 bytes
+ start:
+     cld             ; a sensible precaution
+-    ldx  #lo(nulstk)
++    ldx  #<(nulstk)
+     txs             ; drop whatever is on the stack
+     bcc  user       ; skip "OK" if carry clear
+     jsr  outnl
+@@ -349,7 +350,7 @@ skp2:
+     tax             ; x = 0
+     lda  (at),y
+     tay             ; y = length of line to delete
+-    eor  #-1
++    eor  #255
+     adc  ampr       ; {&} = {&} - y
+     sta  ampr
+     bcs  delt
+@@ -960,9 +961,9 @@ inln6:
+ newln:
+     jsr  outnl      ;   yes: discard entire line
+ inln:
+-    ldy  #lo(linbuf); entry point: start a fresh line
++    ldy  #<(linbuf); entry point: start a fresh line
+     sty  at         ; {@} -> input line buffer
+-    ldy  #hi(linbuf)
++    ldy  #>(linbuf)
+     sty  at+1
+     ldy  #1
+ inln5:
+@@ -992,8 +993,8 @@ inln3:
+ ;                x:a = {(} = actual found line number
+ ; 62 bytes
+ find:
+-    ldx  #hi(prgm)
+-    lda  #lo(prgm)
++    ldx  #>(prgm)
++    lda  #<(prgm)
+     bcc  find1st    ; cc: search begins at first line
+     ldx  at+1
+     ldy  #2
+@@ -1076,86 +1077,27 @@ getbyt2:
+ ;outrts:
+ ;    rts
+ ;-----------------------------------------------------;
+-;========== 2m5 SBC emulator I/O subroutines ============;
+-;-----------------------------------------------------;
+-; Check for user keypress and return if none
+-;   is pending.  Otherwise, check for ctrl-C and
+-;   return after next keypress.
+-;
+ inkey:
+-    lda  acia_rx    ; Is there a character waiting?
+-    beq  inkeyr     ;   no: return
+-    cmp  #3         ; is ctrl-c
+-    beq  istart     ;   yes: abort to OK prompt
+-inkeyp:
+-    lda  acia_rx    ; pause until next key
+-    beq  inkeyp
+-    cmp  #3         ; is ctrl-c
+-    beq  istart     ;   yes: abort to OK prompt
+-inkeyr:
+-    rts
+-; - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+-; Read key from stdin into a, echo, (cs)
+-; Dump stack and abort to "OK" prompt if ctrl-C
+-;
++     lda  KBDCR
++     bpl  outrts
+ inch:
+-    lda  acia_rx    ; get character from rx register
+-    beq  inch       ; wait for character !=0
+-    sty  dolr       ; save y reg
+-    cmp  #127       ; convert delete to backspace
+-    bne  conv_bs2del
+-    lda  #8
+-conv_bs2del:
+-    cmp  #27        ; escape?
+-    bne  skip_esc_no
+-    ldy  #5         ; timer loop - 5*10ms
+-skip_esc_next:
+-    lda  #1         ; ack last tick
+-    sta  acia_st
+-skip_esc_wait:  
+-    lda  acia_st
+-    and  #1         ; next tick
+-    beq  skip_esc_wait
+-    dey
+-    bne  skip_esc_next
+-skip_esc_discard:  
+-    iny             ; any data = y > 1
+-    lda  acia_rx
+-    bne  skip_esc_discard
+-    cpy  #1
+-    bne  inch
+-skip_esc_esc:       ; escape only - send to vtl  
+-    lda  #27
+-    rts
+-skip_esc_no
+-    ldy  dolr       ; restore y reg
+-inch2:
+-    and  #$7f       ; ensure char is positive ascii
+-    cmp  #$03       ; ctrl-C?
+-    bne  outch      ;   no: echo to terminal
+-istart:
+-    jmp  start      ;   yes: abort to "OK" prompt
+-; - - - - - - - - - - - - - - - - - - - - - - - - - - ;
+-; Print ascii char in a to stdout, (cs)
+-;
++     lda  KBDCR
++     bpl  inch
++     lda  KBD
++     and  #$7f
++     cmp  #$03
++     bne  outch
++     jmp  start
+ outch:
+-    cmp  #13        ; add line feed to carriage return
+-    bne  skip_cr
+-    lda  #10
+-    sta  acia_tx
+-    lda  #13
+-skip_cr:
+-    cmp  #8         ; backspace?
+-    bne  skip_bs
+-    sta  acia_tx    ; make erasing backspace
+-    lda  #' '
+-    sta  acia_tx
+-    lda  #8
+-skip_bs:
+-    sta  acia_tx    ; emit char via transmit register
+-    sec             ; (by contract with callers)
+-    rts
++     pha
++     ora  #$80
++     jsr  COUT
++     pla
++     sec
++     ;bit  DSP
++     ;bmi  outch
++     ;sta  DSP
++outrts:
++     rts
+ ;-----------------------------------------------------;
+-    org  $fffc
+-    dw   vtl02c     ; reset vector -> cold start
+-    end  vtl02c     ; set start address
++    .end  vtl02c     ; set start address

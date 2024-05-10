@@ -1,0 +1,25 @@
+diff --git a/msbasic/make.sh b/msbasic/make.sh
+--- a/msbasic/make.sh
++++ b/msbasic/make.sh
+@@ -11,6 +11,6 @@
+ done
+ 
+ # For ROM
+-#bintomon -v -l 0xa000 -r 0xbd0d tmp/osi.bin > tmp/osi.mon
++bintomon -v -l 0xa000 -r 0xbd0d tmp/osi.bin > tmp/osi.mon
+ # For RAM
+-bintomon -v -l 0x6000 -r 0x7d0d tmp/osi.bin > tmp/osi.mon
++#bintomon -v -l 0x6000 -r 0x7d0d tmp/osi.bin > tmp/osi.mon
+
+diff --git a/msbasic/osi.cfg b/msbasic/osi.cfg
+--- a/msbasic/osi.cfg
++++ b/msbasic/osi.cfg
+@@ -1,7 +1,7 @@
+ MEMORY {
+ 	ZP:		start = $0000, size = $0100, type = rw;
+-#	BASROM:		start = $A000, size = $2000, fill = no, file = %O;
+-	BASROM:		start = $6000, size = $2000, fill = no, file = %O;
++	BASROM:		start = $A000, size = $2000, fill = no, file = %O;
++#	BASROM:		start = $6000, size = $2000, fill = no, file = %O;
+ 	DUMMY:		start = $0000, size = $00FF, file = "";
+ }

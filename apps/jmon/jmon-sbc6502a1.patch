@@ -1,0 +1,14 @@
+diff --git a/jmon.s b/jmon.s
+--- a/jmon.s
++++ b/jmon.s
+@@ -219,8 +219,8 @@
+ ; Start address.
+ .if .defined(APPLE1)
+ ; $0280 works well for running out of RAM. Use start address of $A000 for Multi I/0 Board EEPROM
+-; .org $A000
+-  .org $0280
++  .org $A000
++; .org $0280
+ .elseif .defined(APPLE2)
+ ; $0800 should work for DOS 3.3 but conflict with Applesoft.
+ ; $2000 should work but conflict with ProDOS.

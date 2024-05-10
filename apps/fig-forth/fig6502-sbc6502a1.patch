@@ -1,0 +1,28 @@
+diff --git a/fig6502.asm b/fig6502.asm
+--- a/fig6502.asm
++++ b/fig6502.asm
+@@ -52,9 +52,10 @@
+ ;
+ ;         Monitor calls for terminal support
+ ;
+-OUTCH     =$BF2D         ; output one ASCII char. to term. OSI ROM Routine (screen)
++OUTCH     =$FFEF         ; output one ASCII char.
++;OUTCH     =$BF2D         ; output one ASCII char. to term. OSI ROM Routine (screen)
+ ;OUTCH    =$FCB1         ; output one ASCII char. to term. OSI ROM Routine (serial port)
+-INCH      =$FD00         ; input one ASCII char. to term.  OSI ROM Routine (keyboard)
++;INCH      =$FD00         ; input one ASCII char. to term.
+ ;INCH     =$FE80         ; input one ASCII char. to term.  OSI ROM Routine (serial port)
+ ;TCR      =$D0F1         ; terminal return and line feed. See end of listing.
+ ;
+@@ -3826,4 +3827,11 @@
+           PLA
+           RTS
+ 
++INCH:
++          LDA  $D011
++          BPL  INCH
++          LDA  $D010
++          AND  #$7F
++          RTS
++
+ TOP:      .END           ; end of listing

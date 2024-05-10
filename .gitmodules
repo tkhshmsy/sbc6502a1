@@ -7,3 +7,9 @@
 [submodule "develop/cc65/cc65"]
 	path = develop/cc65/cc65
 	url = git@github.com:cc65/cc65.git
+[submodule "apps/vtl02/VTL02"]
+	path = apps/vtl02/VTL02
+	url = git@github.com:Klaus2m5/VTL02.git
+[submodule "apps/krusader/krusader"]
+	path = apps/krusader/krusader
+	url = git@github.com:st3fan/krusader.git

@@ -5,7 +5,7 @@ Single Board Computer with 65C02, clone of Apple I
 
 # Features
 * Clone of Apple I.
-  * similar but much ** grater ** projects are there.
+  * similar but much ** greater ** projects are there.
     * [RC6502](https://github.com/tebl/RC6502-Apple-1-Replica) and [RC6502 Apple 1 SBC](https://github.com/tebl/RC6502-Apple-1-Replica/tree/master/RC6502%20Apple%201%20SBC)
     * [Apple 1 Mini](https://hackaday.io/project/26234/logs)
     * [L-Star](https://github.com/jacgoudsmit/L-Star/)

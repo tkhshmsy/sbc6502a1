@@ -106,7 +106,7 @@ $ ca65 -t ${PLATFORM} -l hello.lst hello.s
 $ ld65 -t ${PLATFORM} -L /usr/local/share/cc65 -m hello.map -o hello hello.o 
 ```
 
-Here, you gets 'hello' binary.
+Here, you'll get 'hello' binary.
 
 ## using C Compiler cc65
 
@@ -139,7 +139,7 @@ $ ca65 -t ${PLATFORM} -l hello.lst hello.s
 ### link all
 $ ld65 -t ${PLATFORM} -L /usr/local/share/cc65/lib -o hello -m hello.map hello.o ${PLATFORM}.lib
 ```
-Here, you gets 'hello' binary.
+Here, you'll get 'hello' binary.
 
 ## Deploy into sbc6502a1
 sbc6502a1 has no storage device but only serial comm.  
@@ -158,8 +158,8 @@ $ srec_cat hello -binary -offset 0x0300 -o hello.srec -Execution_Start_Address 0
 $ objcopy -I binary -O srec --change-addresses 0x0300 --set-start 0x0300 hello hello.srec
 ```
 
-To use jmon, you need to close JP1 with example ROM image ( ROM-rev1.hex ).  
-Then, boot the sbc6502a1 and open minicom.
+To use jmon, you need to close JP1 with example ROM image ( ROM.hex ).  
+Then, boot the sbc6502a1 and open minicom on HostPC.
 
 At boot, wozmon is running. To run jmon, type 'A000R<CR>'
 

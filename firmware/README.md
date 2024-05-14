@@ -57,9 +57,10 @@ $ minicom -b 115200 -D /dev/ttyUSB0
 
 ## Contents of "ROM.hex"
 
-this image is the example.
+Here is the example ROM image, 'ROM.hex'.
 
-all contained programs are from other repositories.
+All contained programs are from other repositories.  
+For details, refer to [sbc6502a1/apps/README.md](../apps/README.md).
 
 * BANK0 (JP1 open)
   * A000 - OSI BASIC 1.0 Rev 3.2
@@ -83,6 +84,6 @@ all contained programs are from other repositories.
     * Symbolic Assembler
   * F000 - VTL02 C
     * 1KB, start: F000
-    * VTL02 Interpreter
+    * VTL Interpreter
   * FF00 - wozmon
     * start: FF00, RESET
